@@ -23,7 +23,7 @@ message = 'hello\n'
 
 def send_message(message):
     """Send a message to the child process"""
-    print(f'[CLIENT] Sending message to server... Message: {message.strip()}')
+    print(f'[CLIENT] Sending message to server... Message: \n {message.strip()}')
     proc.stdin.write(message)
     proc.stdin.flush()
 
@@ -56,7 +56,8 @@ def list_tools():
     # send a JSON-RPC message
     send_message(serialize_message(list_tools_message))
     response = proc.stdout.readline()
-    print_response(response, prefix='[SERVER]: \n')
+    # print_response(response, prefix='[SERVER]: \n')
+    return json.loads(response)['result']['tools']
 
 def close_server():
     # this closes down the child aka server
@@ -66,9 +67,17 @@ def close_server():
     exit_code = proc.wait()
     print(f"Child exited with code {exit_code}")
 
+tools = []
+
 def main():
+    # connect and handshake
     connect()
-    list_tools()
+    
+    # list tools on MCP Server
+    tool_response = list_tools()
+    tools.extend(tool_response)
+    print("Tools available: \n", tools)
+
     close_server()
 
 main()

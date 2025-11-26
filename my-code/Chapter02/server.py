@@ -42,7 +42,23 @@ while True:
                     response = {
                         "jsonrpc": "2.0",
                         "id": json_message["id"],
-                        "result": ["tool1","tool2"]
+                        "result": {
+                            "tools": [
+                                {
+                                    "name": "example_tool",
+                                    "description": "An example tool that does something",
+                                    "inputSchema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "arg1": {
+                                                "type": "string",
+                                                "description": "An example argument."
+                                            }
+                                        },
+                                        "required": ["arg1"]
+                                    }
+                                }
+                            ]}
                     }
                     send_response(response)
                     break
