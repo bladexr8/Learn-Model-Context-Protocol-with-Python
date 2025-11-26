@@ -59,6 +59,22 @@ def list_tools():
     # print_response(response, prefix='[SERVER]: \n')
     return json.loads(response)['result']['tools']
 
+def call_tool(tool_name, args):
+    # 4. call a tool
+    # send a JSON-RPC message
+    tool_message = {
+        "jsonrpc": "2.0",
+        "method": "tools/call",
+        "params": {
+            "name": tool_name,
+            "args": args
+        },
+        "id": 1
+    }
+    send_message(serialize_message(tool_message))
+    response = proc.stdout.readline()
+    return json.loads(response)["result"]["properties"]["content"]["items"]
+
 def close_server():
     # this closes down the child aka server
     send_message('exit\n')
@@ -78,6 +94,13 @@ def main():
     tools.extend(tool_response)
     print("Tools available: \n", tools)
 
+    # call a tool with name and arguments
+    tool = tools[0]
+    tool_call_response = call_tool(tool["name"], { "args1": "hello"})
+    for content in tool_call_response:
+        print_response(content['text'], prefix='[SERVER] tool_response: \n')
+
+    # close MCP server and exit program
     close_server()
 
 main()
