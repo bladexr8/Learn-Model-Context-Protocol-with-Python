@@ -55,9 +55,17 @@ def list_tools():
     # 3. send a message to list tools
     # send a JSON-RPC message
     send_message(serialize_message(list_tools_message))
-    response = proc.stdout.readline()
-    # print_response(response, prefix='[SERVER]: \n')
-    return json.loads(response)['result']['tools']
+    has_result = False
+    while not has_result:
+        response = proc.stdout.readline()
+        # check if message has result attribute, if so break out of loop
+        parsed_response = json.loads(response)
+        if 'result' in parsed_response:
+            has_result = True
+            return parsed_response['result']['tools']
+        else:
+            # this is a notification, we can print it
+            print_response(response, prefix='[SERVER] notification: \n')
 
 def call_tool(tool_name, args):
     # 4. call a tool
@@ -71,9 +79,19 @@ def call_tool(tool_name, args):
         },
         "id": 1
     }
+    
+    has_result = False
     send_message(serialize_message(tool_message))
-    response = proc.stdout.readline()
-    return json.loads(response)["result"]["properties"]["content"]["items"]
+
+    while not has_result:
+        response = proc.stdout.readline()
+        parsed_response = json.loads(response)
+        if 'result' in parsed_response:
+            has_result = True
+            return parsed_response["result"]["properties"]["content"]["items"]
+        else:
+            # this is a notification, we can print it
+            print_response(response, prefix='[SERVER] notification: \n')
 
 def close_server():
     # this closes down the child aka server

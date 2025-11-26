@@ -5,6 +5,14 @@ list_tools_message = {
     "params": {}
 };
 
+progress_notification = {
+    "jsonrpc": "2.0",
+    "method": "notifications/progress",
+    "params": {
+        "message": "Working on it..."
+    }
+};
+
 initialize_message = {
   "jsonrpc": "2.0",
   "id": 1,

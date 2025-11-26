@@ -2,7 +2,7 @@
 import sys
 import json
 
-from utils.messages import initializeResponse
+from utils.messages import initializeResponse, progress_notification
 
 initialized = False
 
@@ -39,6 +39,7 @@ while True:
                     break
                     # should return capabilities
                 case "tools/list":
+                    send_response(progress_notification)
                     response = {
                         "jsonrpc": "2.0",
                         "id": json_message["id"],
@@ -65,6 +66,10 @@ while True:
                 case "tools/call":
                     tool_name = json_message['params']['name']
                     args = json_message['params']['args']
+
+                    send_response(progress_notification)
+                    send_response(progress_notification)
+                    
                     # TODO: create a response for the tool call, i.e. call the right tool
                     response = {
                         "jsonrpc": "2.0",
